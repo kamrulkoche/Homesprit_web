@@ -1,0 +1,111 @@
+/* Must precede the @tailwind directives — Turbopack enforces CSS spec ordering,
+   which requires @import before any rules (the build fails otherwise; see
+   hgs-frontend's CLAUDE.md). */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* A single-typeface system, like hgs-frontend's: display and body resolve to
+     the same face, and the two names exist so `font-display` / `font-body`
+     can diverge later without touching a component. */
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-card: 0 1px 2px rgb(16 32 28 / 0.04), 0 8px 24px -12px rgb(16 32 28 / 0.12);
+  --shadow-card-hover: 0 2px 4px rgb(16 32 28 / 0.05), 0 18px 36px -14px rgb(16 32 28 / 0.22);
+
+  /* Colour leads, movement trails — hgs-frontend's motion contract. */
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500/60 ring-offset-2 ring-offset-white dark:ring-offset-ink;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* The page column. 16px gutters on a phone, wider from md. */
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-300;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold
+      transition-[background-color,color,box-shadow,transform] duration-300 disabled:cursor-not-allowed disabled:opacity-60;
+    transition-timing-function: var(--ease-out);
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn border border-ink/15 bg-white text-ink hover:border-ink/30 hover:bg-sand
+      dark:border-white/15 dark:bg-ink-soft dark:text-white dark:hover:bg-white/10;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-body hover:bg-ink/5 dark:text-slate-300 dark:hover:bg-white/10;
+  }
+
+  .surface {
+    @apply rounded-3xl border border-ink/[0.07] bg-white shadow-card dark:border-white/[0.08] dark:bg-ink-soft;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-ink dark:text-slate-200;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink
+      placeholder:text-ink-muted/70 transition-colors duration-200
+      hover:border-ink/30 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25
+      disabled:cursor-not-allowed disabled:bg-sand
+      dark:border-white/15 dark:bg-ink dark:text-white dark:placeholder:text-slate-500 dark:hover:border-white/30;
+  }
+
+  .field-input[aria-invalid='true'] {
+    @apply border-accent-clay focus:border-accent-clay focus:ring-accent-clay/25;
+  }
+
+  .field-error {
+    @apply mt-1.5 text-sm font-medium text-accent-clay;
+  }
+}
